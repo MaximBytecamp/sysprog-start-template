@@ -26,4 +26,6 @@ jobs:
         uses: ilammy/msvc-dev-cmd@v1
 
       - name: Проверки
+        env:
+          PYTHONUTF8: "1"
         run: python checks/run_checks.py

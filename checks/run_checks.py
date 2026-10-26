@@ -113,6 +113,8 @@ def check_lab01():
 
 
 def main():
+    # Консоль Windows по умолчанию в cp1252: русский текст выводится в UTF-8.
+    sys.stdout.reconfigure(encoding="utf-8")
     rows, ok = check_lab01()
     passed = 0  # проверки агента появятся с пары 4
     lines = [f"## Проверки · {SYSTEM_NAME}", "",
