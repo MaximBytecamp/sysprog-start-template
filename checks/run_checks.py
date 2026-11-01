@@ -112,10 +112,36 @@ def check_lab01():
     return rows, ok
 
 
+LAB02_LINE = "agent: total=6 area=12"
+
+
+def check_lab02():
+    """ЛР 2: debug.c собирается с отладочными сведениями и печатает ту же строку, что на кадрах."""
+    src = ROOT / "labs" / "02-debugger" / "debug.c"
+    if not src.exists():
+        return [("ЛР 2", "debug.c", "не сдано", "")], True
+    with tempfile.TemporaryDirectory() as d:
+        exe = Path(d) / ("debug.exe" if SYSTEM == "win" else "debug")
+        if SYSTEM == "win":
+            r = run(["cl", "/nologo", "/Zi", "/Od", str(src), f"/Fe:{exe}", f"/Fo:{d}\\", f"/Fd:{d}\\"])
+        else:
+            cc = shutil.which("cc") or shutil.which("gcc") or shutil.which("clang")
+            r = run([cc, "-g", "-O0", "-o", str(exe), str(src)])
+        if r.returncode != 0:
+            return [("ЛР 2", "debug.c", "ошибка", "не собирается: " + (r.stdout + r.stderr).strip().splitlines()[-1][:150])], False
+        out = run([str(exe)]).stdout
+    if LAB02_LINE in out:
+        return [("ЛР 2", "debug.c", "пройдено", LAB02_LINE)], True
+    return [("ЛР 2", "debug.c", "ошибка", f"нет строки «{LAB02_LINE}» в выводе")], False
+
+
 def main():
     # Консоль Windows по умолчанию в cp1252: русский текст выводится в UTF-8.
     sys.stdout.reconfigure(encoding="utf-8")
     rows, ok = check_lab01()
+    rows2, ok2 = check_lab02()
+    rows += rows2
+    ok = ok and ok2
     passed = 0  # проверки агента появятся с пары 4
     lines = [f"## Проверки · {SYSTEM_NAME}", "",
              "| Работа | Файл | Результат | Подробности |", "|---|---|---|---|"]

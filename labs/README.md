@@ -6,6 +6,7 @@
 | Папка | Работа | Пара |
 |---|---|---|
 | [`01-process-inside`](01-process-inside/README.md) | [ЛР 1. Процесс изнутри](https://maximbytecamp.github.io/sysprog_makarov/temy/05-laboratornaya-1/index.html) | 1 |
+| [`02-debugger`](02-debugger/README.md) | [ЛР 2. Программа в отладчике](https://maximbytecamp.github.io/sysprog_makarov/temy/09-laboratornaya-2/index.html) | 2 |
 
 ## Что лежит в папке работы
 
