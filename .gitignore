@@ -15,6 +15,7 @@ venv/
 build/
 labs/*/hello
 labs/*/debug
+labs/*/libs
 *.dSYM/
 # система и редакторы
 .DS_Store

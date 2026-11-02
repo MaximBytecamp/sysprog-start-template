@@ -135,13 +135,37 @@ def check_lab02():
     return [("ЛР 2", "debug.c", "ошибка", f"нет строки «{LAB02_LINE}» в выводе")], False
 
 
+LAB03_LINE = "sqrt(2) = 1.414214"
+
+
+def check_lab03():
+    """ЛР 3: libs.c собирается (в Linux — с -lm) и печатает корень из 2."""
+    src = ROOT / "labs" / "03-libraries" / "libs.c"
+    if not src.exists():
+        return [("ЛР 3", "libs.c", "не сдано", "")], True
+    with tempfile.TemporaryDirectory() as d:
+        exe = Path(d) / ("libs.exe" if SYSTEM == "win" else "libs")
+        if SYSTEM == "win":
+            r = run(["cl", "/nologo", str(src), f"/Fe:{exe}", f"/Fo:{d}\\"])
+        else:
+            cc = shutil.which("cc") or shutil.which("gcc") or shutil.which("clang")
+            r = run([cc, "-o", str(exe), str(src), "-lm"])
+        if r.returncode != 0:
+            return [("ЛР 3", "libs.c", "ошибка", "не собирается: " + (r.stdout + r.stderr).strip().splitlines()[-1][:150])], False
+        out = run([str(exe)]).stdout
+    if LAB03_LINE in out:
+        return [("ЛР 3", "libs.c", "пройдено", LAB03_LINE)], True
+    return [("ЛР 3", "libs.c", "ошибка", f"нет строки «{LAB03_LINE}» в выводе")], False
+
+
 def main():
     # Консоль Windows по умолчанию в cp1252: русский текст выводится в UTF-8.
     sys.stdout.reconfigure(encoding="utf-8")
     rows, ok = check_lab01()
     rows2, ok2 = check_lab02()
-    rows += rows2
-    ok = ok and ok2
+    rows3, ok3 = check_lab03()
+    rows += rows2 + rows3
+    ok = ok and ok2 and ok3
     passed = 0  # проверки агента появятся с пары 4
     lines = [f"## Проверки · {SYSTEM_NAME}", "",
              "| Работа | Файл | Результат | Подробности |", "|---|---|---|---|"]
