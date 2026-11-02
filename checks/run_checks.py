@@ -198,6 +198,8 @@ def check_module1_agent():
     except ValueError:
         tail = (r.stderr.strip().splitlines() or ["brain.py не напечатал JSON"])[-1]
         return [("Модуль 1", "brain.py", "ошибка", tail[:150])], False
+    if "uptime_s" not in msg and "pid" in msg:
+        return [("Модуль 1", "brain.py", "не сдано", "ядро из глав 1.1–1.2 работает, поля uptime_s ещё нет")], True
     missing = [k for k in ("event", "pid", "cpus", "page_size", "host", "uptime_s") if k not in msg]
     if missing:
         return [("Модуль 1", "brain.py", "ошибка", "в JSON нет полей: " + ", ".join(missing))], False
